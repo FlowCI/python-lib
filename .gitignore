@@ -1,3 +1,5 @@
 dist/
 build/
 *-info/
+.vscode/
+__pycache__
