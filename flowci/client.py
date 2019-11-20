@@ -1,9 +1,15 @@
 import os
+import sys
 import json
 import base64
 import http.client
 
-from .domain import Job, ServerUrl
+from .domain import FlowName, BuildNumber, AgentToken, Job, ServerUrl
+
+HttpHeaders = {
+    "Content-type": "application/json",
+    "AGENT-TOKEN": AgentToken
+}
 
 def GetVar(name, required=True):
     val = os.environ.get(name)
@@ -22,13 +28,13 @@ class Client:
     def __init__(self):
         pass
 
-    def createConn():
+    def createConn(self):
         if ServerUrl.startswith("http://"):
             return http.client.HTTPConnection(ServerUrl.lstrip("http://"))
 
         return http.client.HTTPConnection(ServerUrl.lstrip("https://"))
 
-    def getCredential(name):
+    def getCredential(self, name):
         try:
             path = "/api/credential/{}".format(name)
             conn = createConn()
@@ -44,7 +50,7 @@ class Client:
             print(e)
             return None
 
-    def listFlowUsers():
+    def listFlowUsers(self):
         try:
             path = "/api/flow/{}/users".format(FlowName)
             conn = createConn()
@@ -60,7 +66,7 @@ class Client:
             print(e)
             return None
 
-    def sendSummary(body):
+    def sendSummary(self, body):
         try:
             path = "/api/flow/{}/job/{}/summary".format(FlowName, BuildNumber)
             conn = createConn()
@@ -70,8 +76,7 @@ class Client:
             print(e)
             return -1
 
-
-    def sendStatistic(body):
+    def sendStatistic(self, body):
         try:
             path = "/api/flow/{}/stats".format(FlowName)
             conn = createConn()

@@ -45,11 +45,6 @@ GitPrBaseRepoName = os.environ.get('FLOWCI_GIT_PR_BASE_REPO_NAME')
 GitPrBaseRepoBranch = os.environ.get('FLOWCI_GIT_PR_BASE_REPO_BRANCH')
 GitPrBaseRepoCommit = os.environ.get('FLOWCI_GIT_PR_BASE_REPO_COMMIT')
 
-HttpHeaders = {
-    "Content-type": "application/json",
-    "AGENT-TOKEN": AgentToken
-}
-
 class Job:
     def __init__(self):
         self.flowName = FlowName
