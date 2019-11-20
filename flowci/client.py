@@ -3,7 +3,7 @@ import json
 import base64
 import http.client
 
-from domain import Job, ServerUrl
+from .domain import Job, ServerUrl
 
 def GetVar(name, required=True):
     val = os.environ.get(name)
