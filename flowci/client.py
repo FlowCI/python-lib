@@ -4,7 +4,7 @@ import json
 import base64
 import http.client
 
-from .domain import FlowName, BuildNumber, AgentToken, Job, ServerUrl
+from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl
 
 HttpHeaders = {
     "Content-type": "application/json",
@@ -68,7 +68,8 @@ class Client:
 
     def sendSummary(self, body):
         try:
-            path = "/api/flow/{}/job/{}/summary".format(FlowName, BuildNumber)
+            path = "/api/flow/{}/job/{}/summary".format(
+                FlowName, JobBuildNumber)
             conn = createConn()
             conn.request("POST", path, json.dumps(body), HttpHeaders)
             return conn.getresponse().status
