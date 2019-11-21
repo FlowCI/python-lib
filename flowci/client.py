@@ -37,7 +37,7 @@ class Client:
     def getCredential(self, name):
         try:
             path = "/api/credential/{}".format(name)
-            conn = createConn()
+            conn = self.createConn()
             conn.request(method="GET", url=path, headers=HttpHeaders)
 
             response = conn.getresponse()
@@ -53,7 +53,7 @@ class Client:
     def listFlowUsers(self):
         try:
             path = "/api/flow/{}/users".format(FlowName)
-            conn = createConn()
+            conn = self.createConn()
             conn.request(method="GET", url=path, headers=HttpHeaders)
             response = conn.getresponse()
 
@@ -70,7 +70,7 @@ class Client:
         try:
             path = "/api/flow/{}/job/{}/summary".format(
                 FlowName, JobBuildNumber)
-            conn = createConn()
+            conn = self.createConn()
             conn.request("POST", path, json.dumps(body), HttpHeaders)
             return conn.getresponse().status
         except Exception as e:
@@ -80,7 +80,7 @@ class Client:
     def sendStatistic(self, body):
         try:
             path = "/api/flow/{}/stats".format(FlowName)
-            conn = createConn()
+            conn = self.createConn()
             conn.request("POST", path, json.dumps(body), HttpHeaders)
             return conn.getresponse().status
         except Exception as e:
