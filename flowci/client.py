@@ -86,3 +86,14 @@ class Client:
         except Exception as e:
             print(e)
             return -1
+
+    def addJobContext(self, var):
+        try:
+            path = "/api/flow/{}/job/{}/context".format(
+                FlowName, JobBuildNumber)
+            conn = self.createConn()
+            conn.request("POST", path, json.dumps(var), HttpHeaders)
+            return conn.getresponse().status
+        except Exception as e:
+            print(e)
+            return -1
