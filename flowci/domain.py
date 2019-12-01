@@ -1,6 +1,12 @@
 import os
 from datetime import datetime
 
+ContentTypeZip = 'zip'
+ContentTypeGZip = 'gzip'
+ContentTypeHtml = 'html'
+ContentTypeJson = 'json'
+ContentTypeXml = 'xml'
+
 JobTriggerScheduler = "SCHEDULER"
 JobTriggerApi = "API"
 JobTriggerManual = "MANUAL"

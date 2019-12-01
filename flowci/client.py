@@ -2,12 +2,11 @@ import os
 import sys
 import json
 import base64
-import http.client
+import requests
 
 from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl
 
 HttpHeaders = {
-    "Content-type": "application/json",
     "AGENT-TOKEN": AgentToken
 }
 
@@ -28,21 +27,12 @@ class Client:
     def __init__(self):
         pass
 
-    def createConn(self):
-        if ServerUrl.startswith("http://"):
-            return http.client.HTTPConnection(ServerUrl.lstrip("http://"))
-
-        return http.client.HTTPConnection(ServerUrl.lstrip("https://"))
-
     def getCredential(self, name):
         try:
-            path = "/api/credential/{}".format(name)
-            conn = self.createConn()
-            conn.request(method="GET", url=path, headers=HttpHeaders)
-
-            response = conn.getresponse()
-            if response.status is 200:
-                body = response.read()
+            url = "{}/api/credential/{}".format(ServerUrl, name)
+            r = requests.get(url=url, headers=HttpHeaders)
+            if r.status_code is 200:
+                body = r.text
                 return json.loads(body)
 
             return None
@@ -52,13 +42,11 @@ class Client:
 
     def listFlowUsers(self):
         try:
-            path = "/api/flow/{}/users".format(FlowName)
-            conn = self.createConn()
-            conn.request(method="GET", url=path, headers=HttpHeaders)
-            response = conn.getresponse()
+            url = "{}/api/flow/{}/users".format(ServerUrl, FlowName)
+            r = requests.get(url=url, headers=HttpHeaders)
 
-            if response.status is 200:
-                body = response.read()
+            if r.status_code is 200:
+                body = r.text
                 return json.loads(body)
 
             return None
@@ -66,34 +54,34 @@ class Client:
             print(e)
             return None
 
-    def sendSummary(self, body):
+    def sendJobReport(self, path, body):
         try:
-            path = "/api/flow/{}/job/{}/summary".format(
-                FlowName, JobBuildNumber)
-            conn = self.createConn()
-            conn.request("POST", path, json.dumps(body), HttpHeaders)
-            return conn.getresponse().status
+            url = "{}/api/flow/{}/job/{}/report".format(
+                ServerUrl, FlowName, JobBuildNumber)
+            r = requests.post(url=url, headers=HttpHeaders, files={
+                'file': open(path, 'rb'),
+                'body': ('', json.dumps(body), 'application/json')
+            })
+            return r.status_code
         except Exception as e:
             print(e)
             return -1
 
     def sendStatistic(self, body):
         try:
-            path = "/api/flow/{}/stats".format(FlowName)
-            conn = self.createConn()
-            conn.request("POST", path, json.dumps(body), HttpHeaders)
-            return conn.getresponse().status
+            url = "{}/api/flow/{}/stats".format(ServerUrl, FlowName)
+            r = requests.post(url=url, headers=HttpHeaders, data=json.dumps(body))
+            return r.status_code
         except Exception as e:
             print(e)
             return -1
 
     def addJobContext(self, var):
         try:
-            path = "/api/flow/{}/job/{}/context".format(
-                FlowName, JobBuildNumber)
-            conn = self.createConn()
-            conn.request("POST", path, json.dumps(var), HttpHeaders)
-            return conn.getresponse().status
+            url = "{}/api/flow/{}/job/{}/context".format(ServerUrl, FlowName, JobBuildNumber)
+            r = requests.post(url=url, headers=HttpHeaders,
+                              data=json.dumps(var))
+            return r.status_code
         except Exception as e:
             print(e)
             return -1
