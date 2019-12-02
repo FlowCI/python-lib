@@ -4,7 +4,7 @@ import json
 import base64
 import requests
 
-from domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir
+from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir
 
 HttpHeaders = {
     "AGENT-TOKEN": AgentToken
