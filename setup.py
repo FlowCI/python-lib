@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="python-lib-flow.ci", # Replace with your own username
-    version="1.0.8",
+    version="1.0.9",
     author="Yang Guo",
     author_email="32008001@qq.com",
     description="flow.ci python open api lib",
