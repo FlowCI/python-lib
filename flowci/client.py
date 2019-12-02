@@ -4,7 +4,7 @@ import json
 import base64
 import requests
 
-from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl
+from domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir
 
 HttpHeaders = {
     "AGENT-TOKEN": AgentToken
@@ -16,12 +16,30 @@ def GetVar(name, required=True):
         sys.exit("{} is missing".format(name))
     return val
 
+
 def GetCurrentJob():
     return Job()
+
 
 def ToBase64String(strVal):
     b64bytes = base64.b64encode(strVal.encode("utf-8"))
     return str(b64bytes, 'utf-8')
+
+
+def FindFiles(file, path = AgentJobDir):
+    files = []
+
+    for i in os.listdir(path):
+        fullPath = os.path.join(path, i)
+
+        if os.path.isdir(fullPath) and not i.startswith("."):
+            files += FindFiles(file, fullPath)
+
+        if os.path.isfile(fullPath) and i == file:
+            files.append(fullPath)
+
+    return files
+
 
 class Client:
     def __init__(self):
