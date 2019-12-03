@@ -1,11 +1,16 @@
 import os
 from datetime import datetime
 
+# job report content types
 ContentTypeZip = 'zip'
 ContentTypeGZip = 'gzip'
 ContentTypeHtml = 'html'
 ContentTypeJson = 'json'
 ContentTypeXml = 'xml'
+
+# default job reports name
+JobReportCodeCoverage = "Code Coverage"
+JobReportTests = "Tests"
 
 JobTriggerScheduler = "SCHEDULER"
 JobTriggerApi = "API"
