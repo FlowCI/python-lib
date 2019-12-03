@@ -6,6 +6,11 @@ import requests
 
 from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir
 
+HttpHeaderWithJson = {
+    "Content-Type": "application/json"
+    "AGENT-TOKEN": AgentToken
+}
+
 HttpHeaders = {
     "AGENT-TOKEN": AgentToken
 }
@@ -48,7 +53,7 @@ class Client:
     def getCredential(self, name):
         try:
             url = "{}/api/credential/{}".format(ServerUrl, name)
-            r = requests.get(url=url, headers=HttpHeaders)
+            r = requests.get(url=url, headers=HttpHeaderWithJson)
             if r.status_code is 200:
                 body = r.text
                 return json.loads(body)
@@ -61,7 +66,7 @@ class Client:
     def listFlowUsers(self):
         try:
             url = "{}/api/flow/{}/users".format(ServerUrl, FlowName)
-            r = requests.get(url=url, headers=HttpHeaders)
+            r = requests.get(url=url, headers=HttpHeaderWithJson)
 
             if r.status_code is 200:
                 body = r.text
@@ -88,7 +93,7 @@ class Client:
     def sendStatistic(self, body):
         try:
             url = "{}/api/flow/{}/stats".format(ServerUrl, FlowName)
-            r = requests.post(url=url, headers=HttpHeaders, data=json.dumps(body))
+            r = requests.post(url=url, headers=HttpHeaderWithJson, data=json.dumps(body))
             return r.status_code
         except Exception as e:
             print(e)
@@ -97,7 +102,7 @@ class Client:
     def addJobContext(self, var):
         try:
             url = "{}/api/flow/{}/job/{}/context".format(ServerUrl, FlowName, JobBuildNumber)
-            r = requests.post(url=url, headers=HttpHeaders,
+            r = requests.post(url=url, headers=HttpHeaderWithJson,
                               data=json.dumps(var))
             return r.status_code
         except Exception as e:
