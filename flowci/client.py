@@ -7,7 +7,7 @@ import requests
 from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir
 
 HttpHeaderWithJson = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
     "AGENT-TOKEN": AgentToken
 }
 
