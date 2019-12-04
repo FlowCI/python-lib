@@ -77,10 +77,17 @@ class Client:
             print(e)
             return None
 
-    def sendJobReport(self, path, body):
+    def sendJobReport(self, path, name, zipped, contentType):
         try:
             url = "{}/api/flow/{}/job/{}/report".format(
                 ServerUrl, FlowName, JobBuildNumber)
+
+            body = {
+                "name": name,
+                "zipped": zipped,
+                "type": contentType
+            }
+
             r = requests.post(url=url, headers=HttpHeaders, files={
                 'file': open(path, 'rb'),
                 'body': ('', json.dumps(body), 'application/json')
