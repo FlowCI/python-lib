@@ -98,6 +98,20 @@ class Client:
             print(e)
             return -1
 
+    def uploadJobArtifact(self, path):
+        try:
+            url = "{}/api/flow/{}/job/{}/artifact".format(
+                ServerUrl, FlowName, JobBuildNumber)
+
+            r = requests.post(url=url, headers=HttpHeaders, files={
+                'file': open(path, 'rb')
+            })
+
+            return r.status_code
+        except Exception as e:
+            print(e)
+            return -1
+
     def sendStatistic(self, body):
         try:
             url = "{}/api/flow/{}/stats".format(ServerUrl, FlowName)
