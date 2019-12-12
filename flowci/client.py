@@ -98,14 +98,19 @@ class Client:
             print(e)
             return -1
 
-    def uploadJobArtifact(self, path):
+    def uploadJobArtifact(self, path, srcDir = None):
         try:
             url = "{}/api/flow/{}/job/{}/artifact".format(
                 ServerUrl, FlowName, JobBuildNumber)
 
-            r = requests.post(url=url, headers=HttpHeaders, files={
+            content = {
                 'file': open(path, 'rb')
-            })
+            }
+
+            if srcDir != None:
+                content["body"] = ('', json.dumps({"srcDir": srcDir}), 'application/json')
+
+            r = requests.post(url=url, headers=HttpHeaders, files=content)
 
             return r.status_code
         except Exception as e:
