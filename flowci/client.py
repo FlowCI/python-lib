@@ -62,7 +62,7 @@ class Client:
 
     def getCredential(self, name):
         try:
-            url = "{}/api/credential/{}".format(ServerUrl, name)
+            url = "{}/api/secret/{}".format(ServerUrl, name)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
             if r.status_code is 200:
                 body = r.text
@@ -72,6 +72,20 @@ class Client:
         except Exception as e:
             print(e)
             return None
+
+    def getConfig(self, name):
+        try:
+            url = "{}/api/config/{}".format(ServerUrl, name)
+            r = requests.get(url=url, headers=HttpHeaderWithJson)
+            if r.status_code is 200:
+                body = r.text
+                return json.loads(body)
+
+            return None
+        except Exception as e:
+            print(e)
+            return None
+
 
     def listFlowUsers(self):
         try:
