@@ -71,16 +71,20 @@ class Job:
         self.gitCommit = GitCommit()
         self.gitPr = GitPr()
 
-        if JobStartAt != None and JobFinishAt != None:
+        if self.hasValue(JobStartAt) and self.hasValue(JobFinishAt):
             start = datetime.strptime(JobStartAt, "%Y-%m-%d %H:%M:%S.%f")
             finish = datetime.strptime(JobFinishAt, "%Y-%m-%d %H:%M:%S.%f")
             self.duration = abs(finish - start).microseconds
 
-        if JobSteps != None:
+        if self.hasValue(JobSteps):
             items = JobSteps.split(";")
             for item in items:
                 if item != '':
                     self.steps.append(Step(item))
+
+    def hasValue(self, val):
+        return val != None and val != ''
+
 
 class Step:
     def __init__(self, strItem):
