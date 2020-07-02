@@ -1,11 +1,12 @@
 import os
 import sys
 import json
+import errno
 import base64
 import requests
 import hashlib
 
-from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir
+from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir, AgentWorkspace
 
 HttpHeaderWithJson = {
     "Content-Type": "application/json",
@@ -15,7 +16,6 @@ HttpHeaderWithJson = {
 HttpHeaders = {
     "AGENT-TOKEN": AgentToken
 }
-
 
 def GetVar(name, required=True):
     val = os.environ.get(name)
@@ -58,7 +58,20 @@ def MD5(path):
 
 class Client:
     def __init__(self):
+        self.secretPath = os.path.join(AgentWorkspace, '.ci_secret')
+        self.initDirs(self.secretPath)
+
+        self.configPath = os.path.join(AgentWorkspace, '.ci_config')
+        self.initDirs(self.configPath)
         pass
+
+    def initDirs(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                print('unable to init required dirs')
+                raise
 
     def getCredential(self, name):
         try:
@@ -68,6 +81,27 @@ class Client:
                 body = r.text
                 return json.loads(body)
 
+
+            print(r.content)
+            return None
+        except Exception as e:
+            print(e)
+            return None
+
+    # download secret file and return file path that saved locally
+    def downloadSecretFile(self, name, filename):
+        try:
+            url = "{}/api/secret/{}/download/{}".format(
+                ServerUrl, name, filename)
+            r = requests.get(url, allow_redirects=True,
+                             headers=HttpHeaderWithJson)
+
+            if r.status_code is 200:
+                path = os.path.join(self.secretPath, filename)
+                open(path, 'wb').write(r.content)
+                return path
+
+            print(r)
             return None
         except Exception as e:
             print(e)
@@ -85,7 +119,6 @@ class Client:
         except Exception as e:
             print(e)
             return None
-
 
     def listFlowUsers(self):
         try:

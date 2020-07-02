@@ -32,6 +32,7 @@ JobFinishAt = os.environ.get("FLOWCI_JOB_FINISH_AT")
 JobSteps = os.environ.get("FLOWCI_JOB_STEPS")
 
 AgentToken = os.environ.get('FLOWCI_AGENT_TOKEN')
+AgentWorkspace = os.environ.get('FLOWCI_AGENT_WORKSPACE')
 AgentJobDir = os.environ.get('FLOWCI_AGENT_JOB_DIR')
 
 GitEvent = os.environ.get('FLOWCI_GIT_EVENT')
@@ -55,6 +56,7 @@ GitPrHeadRepoCommit = os.environ.get('FLOWCI_GIT_PR_HEAD_REPO_COMMIT')
 GitPrBaseRepoName = os.environ.get('FLOWCI_GIT_PR_BASE_REPO_NAME')
 GitPrBaseRepoBranch = os.environ.get('FLOWCI_GIT_PR_BASE_REPO_BRANCH')
 GitPrBaseRepoCommit = os.environ.get('FLOWCI_GIT_PR_BASE_REPO_COMMIT')
+
 
 class Job:
     def __init__(self):
@@ -92,6 +94,7 @@ class Step:
         self.name = pair[0]
         self.status = pair[1]
 
+
 class GitCommit:
     def __init__(self):
         self.id = GitCommitID
@@ -99,6 +102,7 @@ class GitCommit:
         self.message = GitCommitMessage
         self.time = GitCommitTime
         self.url = GitCommitURL
+
 
 class GitPr:
     def __init__(self):
@@ -110,11 +114,13 @@ class GitPr:
         self.head = GitPrHeadRepo()
         self.base = GitPrBaseRepo()
 
+
 class GitPrHeadRepo:
     def __init__(self):
         self.name = GitPrHeadRepoName
         self.branch = GitPrHeadRepoBranch
         self.commit = GitPrHeadRepoCommit
+
 
 class GitPrBaseRepo:
     def __init__(self):
