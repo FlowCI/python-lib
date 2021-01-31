@@ -6,7 +6,7 @@ import base64
 import requests
 import hashlib
 
-from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir, AgentWorkspace
+from domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir, AgentWorkspace
 
 HttpHeaderWithJson = {
     "Content-Type": "application/json",
@@ -77,12 +77,12 @@ class Client:
         try:
             url = "{}/api/secret/{}".format(ServerUrl, name)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
-            if r.status_code is 200:
-                body = r.text
-                return json.loads(body)
+            
+            ok, dataOrErr = self.handleResponse(r)
+            if ok:
+                return dataOrErr
 
-
-            print(r.content)
+            print(dataOrErr)
             return None
         except Exception as e:
             print(e)
@@ -96,7 +96,7 @@ class Client:
             r = requests.get(url, allow_redirects=True,
                              headers=HttpHeaderWithJson)
 
-            if r.status_code is 200:
+            if r.status_code == 200:
                 path = os.path.join(self.secretPath, filename)
                 open(path, 'wb').write(r.content)
                 return path
@@ -111,10 +111,12 @@ class Client:
         try:
             url = "{}/api/config/{}".format(ServerUrl, name)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
-            if r.status_code is 200:
-                body = r.text
-                return json.loads(body)
+            
+            ok, dataOrErr = self.handleResponse(r)
+            if ok:
+                return dataOrErr
 
+            print(dataOrErr)
             return None
         except Exception as e:
             print(e)
@@ -125,7 +127,7 @@ class Client:
             url = "{}/api/flow/{}/users".format(ServerUrl, FlowName)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
 
-            if r.status_code is 200:
+            if r.status_code == 200:
                 body = r.text
                 return json.loads(body)
 
@@ -197,3 +199,16 @@ class Client:
         except Exception as e:
             print(e)
             return -1
+
+    def handleResponse(self, r):
+        if r.status_code != 200:
+            return False, r.text
+
+        body = json.loads(r.text)
+        if body["code"] != 200:
+            return False, body["message"]
+
+        return True, body["data"]
+
+        
+Client().getCredential("fake")
