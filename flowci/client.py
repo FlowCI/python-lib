@@ -77,13 +77,7 @@ class Client:
         try:
             url = "{}/api/secret/{}".format(ServerUrl, name)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
-            
-            ok, dataOrErr = self.handleResponse(r)
-            if ok:
-                return dataOrErr
-
-            print(dataOrErr)
-            return None
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return None
@@ -91,10 +85,8 @@ class Client:
     # download secret file and return file path that saved locally
     def downloadSecretFile(self, name, filename):
         try:
-            url = "{}/api/secret/{}/download/{}".format(
-                ServerUrl, name, filename)
-            r = requests.get(url, allow_redirects=True,
-                             headers=HttpHeaderWithJson)
+            url = "{}/api/secret/{}/download/{}".format(ServerUrl, name, filename)
+            r = requests.get(url, allow_redirects=True, headers=HttpHeaderWithJson)
 
             if r.status_code == 200:
                 path = os.path.join(self.secretPath, filename)
@@ -111,13 +103,7 @@ class Client:
         try:
             url = "{}/api/config/{}".format(ServerUrl, name)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
-            
-            ok, dataOrErr = self.handleResponse(r)
-            if ok:
-                return dataOrErr
-
-            print(dataOrErr)
-            return None
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return None
@@ -126,12 +112,7 @@ class Client:
         try:
             url = "{}/api/flow/{}/users".format(ServerUrl, FlowName)
             r = requests.get(url=url, headers=HttpHeaderWithJson)
-
-            if r.status_code == 200:
-                body = r.text
-                return json.loads(body)
-
-            return None
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return None
@@ -152,7 +133,8 @@ class Client:
                 'file': open(path, 'rb'),
                 'body': ('', json.dumps(body), 'application/json')
             })
-            return r.status_code
+
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return -1
@@ -174,7 +156,7 @@ class Client:
                 "body": ('', json.dumps(body), 'application/json')
             })
 
-            return r.status_code
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return -1
@@ -182,33 +164,35 @@ class Client:
     def sendStatistic(self, body):
         try:
             url = "{}/api/flow/{}/stats".format(ServerUrl, FlowName)
-            r = requests.post(
-                url=url, headers=HttpHeaderWithJson, data=json.dumps(body))
-            return r.status_code
+            r = requests.post(url=url, headers=HttpHeaderWithJson, data=json.dumps(body))
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return -1
 
     def addJobContext(self, var):
         try:
-            url = "{}/api/flow/{}/job/{}/context".format(
-                ServerUrl, FlowName, JobBuildNumber)
-            r = requests.post(url=url, headers=HttpHeaderWithJson,
-                              data=json.dumps(var))
-            return r.status_code
+            url = "{}/api/flow/{}/job/{}/context".format(ServerUrl, FlowName, JobBuildNumber)
+            r = requests.post(url=url, headers=HttpHeaderWithJson, data=json.dumps(var))
+            return self.handleResponse(r)
         except Exception as e:
             print(e)
             return -1
 
     def handleResponse(self, r):
         if r.status_code != 200:
-            return False, r.text
+            print(r.text)
+            return None
 
         body = json.loads(r.text)
         if body["code"] != 200:
-            return False, body["message"]
+            print(body["message"])
+            return None
 
-        return True, body["data"]
+        if body["data"] == None:
+            return "success"
+
+        return body["data"]
 
         
-Client().getCredential("fake")
+print(Client().downloadSecretFile("test", "ios_development.cer"))
