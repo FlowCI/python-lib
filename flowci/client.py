@@ -6,7 +6,7 @@ import base64
 import requests
 import hashlib
 
-from domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir, AgentWorkspace
+from .domain import FlowName, JobBuildNumber, AgentToken, Job, ServerUrl, AgentJobDir, AgentWorkspace
 
 HttpHeaderWithJson = {
     "Content-Type": "application/json",
@@ -195,4 +195,4 @@ class Client:
         return body["data"]
 
         
-print(Client().downloadSecretFile("test", "ios_development.cer"))
+# print(Client().downloadSecretFile("test", "ios_development.cer"))
