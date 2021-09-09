@@ -189,8 +189,8 @@ class Client:
             print(body["message"])
             return None
 
-        if body["data"] == None:
-            return "success"
+        if "data" not in body:
+            return body["message"]
 
         return body["data"]
 
